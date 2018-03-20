@@ -75,6 +75,9 @@ const NSArray *___NSLayoutAttributeArr;
     [self parserFilePath:[self.parser.xmlUrl absoluteString] withBlock:self.parser.xmlParserBlock superView:self.parser.superView];
     [self.parser parse];
 }
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    [self parserAgain];
+}
 #pragma mark xmlparser
 //step 1 :准备解析
 - (void)parserDidStartDocument:(NSXMLParser *)parser
