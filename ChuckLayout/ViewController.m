@@ -17,11 +17,11 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
     __weak typeof(self) weakSelf = self;
     NSString * path = [[NSBundle mainBundle] pathForResource:@"test" ofType:@"xml"];
     NSXMLParser * parser = [self.parserManager parserFilePath:path withBlock:^(ParserManager *parser, NSMutableDictionary *xmlDictionary, NSString *jsonString, UIView *view, NSError *error) {
         if (error) {
+            NSLog(@"error:%@",error);
             return;
         }
     } superView:self.view];
@@ -37,5 +37,7 @@
     }
     return _parserManager;
 }
-
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    [self.parserManager parserAgain];
+}
 @end

@@ -75,9 +75,7 @@ const NSArray *___NSLayoutAttributeArr;
     [self parserFilePath:[self.parser.xmlUrl absoluteString] withBlock:self.parser.xmlParserBlock superView:self.parser.superView];
     [self.parser parse];
 }
-- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event {
-    [self parserAgain];
-}
+
 #pragma mark xmlparser
 //step 1 :准备解析
 - (void)parserDidStartDocument:(NSXMLParser *)parser
@@ -91,6 +89,11 @@ const NSArray *___NSLayoutAttributeArr;
     [parser configJustProcessStartElement:YES];
     //清空字符
     parser.jsonString = @"";
+    for (UIView * sub in [self.views allValues]) {
+        if (![sub isEqual:self.parser.superView]) {
+            [sub removeFromSuperview];
+        }
+    }
     [self.formats removeAllObjects];
     [self.views removeAllObjects];
 }
@@ -163,9 +166,7 @@ const NSArray *___NSLayoutAttributeArr;
 - (void)parser:(NSXMLParser *)parser foundCDATA:(NSData *)CDATABlock{}
 
 - (void)drawView:(NSXMLParser *)parser error:(NSError *)error{
-    parser.xmlView = [NSClassFromString(parser.xmlDictionary[@"elementName"]) new];
-    [self configId:parser.xmlView dict:parser.xmlDictionary[@"attrs"]];
-    
+    parser.xmlView = [self createViewByDict:parser.xmlDictionary];
     [self recurPrintPath:parser.xmlDictionary parent:parser.xmlView from:0 superView:parser.superView];
     
     [ParserManager formats:self.formats views:self.views];
@@ -174,13 +175,53 @@ const NSArray *___NSLayoutAttributeArr;
         parser.xmlParserBlock(self,parser.xmlDictionary, parser.jsonString,parser.xmlView, error);
     }
 }
-- (void)configId:(UIView *)view dict:(NSDictionary *)dict{
-    NSString * layout_id = [NSString stringWithFormat:@"view_%ld_%ld", (long)[[NSDate date] timeIntervalSince1970]*1000,self.views.count];
-    if (dict && dict[@"id"]) {
-        layout_id = dict[@"id"];
+- (UIView *)createViewByDict:(NSDictionary *)dict{
+    NSString * elementName = dict[@"elementName"];
+    NSDictionary * attrs = dict[@"attrs"];
+    UIView * view = nil;
+    
+    if (elementName.length>0) {
+        if ([elementName isEqualToString:@"UICollectionView"]) {
+            
+            UICollectionViewLayout * layout = [NSClassFromString(attrs[@"layout"]) new];
+            NSString *propertys = attrs[@"layout_propertys"];
+            if (propertys) {
+                 __autoreleasing NSError* error = nil;
+                
+                NSDictionary *layout_propertys = [NSJSONSerialization JSONObjectWithData:[propertys dataUsingEncoding:NSUTF8StringEncoding] options:kNilOptions error:&error];
+                if (layout_propertys) {
+                    [layout_propertys enumerateKeysAndObjectsUsingBlock:^(id  _Nonnull key, id  _Nonnull obj, BOOL * _Nonnull stop) {
+                        if ([key hasSuffix:@"Size"]) {
+                            obj = [NSValue valueWithCGSize:CGSizeFromString(obj)];
+                        }
+                        [layout setValue:obj forKey:key];
+                    }];
+                    
+                }
+            }
+            if (layout) {
+                UICollectionView * coll = [[UICollectionView alloc]initWithFrame:CGRectZero collectionViewLayout:layout];
+                view = coll;
+            }
+        }else{
+            
+        }
+    }
+    if (!view) {
+        view = [NSClassFromString(elementName) new];
+    }
+    NSString * addr = [NSString stringWithFormat:@"%p", self.parser.superView];
+    addr = [addr stringByReplacingOccurrencesOfString:@"0x" withString:@""];
+    NSString * viewaddr = [NSString stringWithFormat:@"%p", view];
+    viewaddr = [viewaddr stringByReplacingOccurrencesOfString:@"0x" withString:@""];
+    NSString * layout_id = [NSString stringWithFormat:@"%@%@%@",elementName,addr,viewaddr];
+    if (attrs && attrs[@"id"]) {
+        layout_id = attrs[@"id"];
     }
     view.layout_id = layout_id;
     [self.views setObject:view forKey:view.layout_id];
+    
+    return view;
 }
 
 - (void)recurPrintPath:(NSDictionary *)dict parent:(UIView *)parant from:(int)from superView:(UIView *)superView{
@@ -188,8 +229,7 @@ const NSArray *___NSLayoutAttributeArr;
         if ([dict[key] isKindOfClass:[NSDictionary class]]) {//字典是面向属性的最后一关
             if (from!=0) {
                 //这里面的都是子节点
-                UIView * view = [NSClassFromString(dict[@"elementName"]) new];
-                [self configId:view dict:dict[@"attrs"]];
+                UIView * view = [self createViewByDict:dict];
                 if (from==2) {
                     [parant addSubview:view];
                 }
@@ -293,116 +333,110 @@ const NSArray *___NSLayoutAttributeArr;
                         attribute = NSLayoutAttributeEnum(attri);
                     }
                     NSString * sec = [formatArr lastObject];
-                    NSArray * secFormat = nil;
-                    
-                    if ([ParserManager isPureNum:sec]) {
+                    if ([self isPureNum:sec]) {
                         item2View = nil;
                         attribute2 = NSLayoutAttributeNotAnAttribute;
                         multiplier = 1.0;
                         c = [sec floatValue];
                     }else{
-                        NSCharacterSet *doNotWant = [NSCharacterSet characterSetWithCharactersInString:@"[]{}（#%-*+=_）\\|~(＜＞$%^&*)_+ "];
-                        secFormat = [sec componentsSeparatedByCharactersInSet:doNotWant];
-                        for (NSString * obj in secFormat) {
-                            if (![obj isEqualToString:@""]&&![ParserManager isPureNum:obj]) {
-                                NSArray * item2Attri2 = [obj componentsSeparatedByString:@"."];
-                                NSString * item2 = [item2Attri2 firstObject];
-                                NSString * reltmp = [item2Attri2 lastObject];
-                                //处理 item2View 和 attribute2
-                                if (item2Attri2.count==1) {
-                                    if ([views[item2] isKindOfClass:[UIView class]]) {
-                                        item2View = views[item2];
-                                        attribute2 = attribute;
-                                        
-                                    }else{
-                                        NSAssert(0, @"1、Invalid view.attribute value:%@",sec);
-                                    }
-                                }else if (item2Attri2.count==2){
-                                    if ([views[item2] isKindOfClass:[UIView class]] && (NSLayoutAttributeEnum(reltmp) != NSNotFound)) {
-                                        item2View = views[item2];
-                                        attribute2 = NSLayoutAttributeEnum(reltmp);
-                                    }else{
-                                        NSAssert(0, @"2、Invalid view.attribute value:%@",sec);
-                                    }
-                                }else{
-                                    NSAssert(0, @"3、Invalid view.attribute value:%@",sec);
-                                }
-                                //处理倍数关系
-                                //1、左右是否有*
-                                NSInteger index = [secFormat indexOfObject:obj];
-                                NSString * constanttmp = obj;
-                                NSString * replace=@"1234567891011121314151617181920";
-                                NSString * result = [sec stringByReplacingOccurrencesOfString:obj withString:replace];
-                                result = [FormulaStringCalcUtility firstCalcComplexFormulaString:result];
-                                result = [result stringByReplacingOccurrencesOfString:replace withString:obj];
-                                
-                                BOOL isleft = ([sec rangeOfString:[@"*" stringByAppendingString:obj]].location!=NSNotFound);
-                                BOOL isRight = ([sec rangeOfString:[obj stringByAppendingString:@"*"]].location!=NSNotFound);
-                                if (isleft || isRight){
-                                    NSArray * tmp = [result componentsSeparatedByCharactersInSet:doNotWant];
-                                    NSInteger index = [tmp indexOfObject:obj];
-                                    if (isleft && isRight) {
-                                        
-                                        NSInteger tmpIndex = index-1;
-                                        CGFloat muls = 1.0;
-                                        NSString * mulLeft = @"";
-                                        NSString * mulRight = @"";
-                                        if (tmpIndex<=tmp.count && tmpIndex>=0) {
-                                            mulLeft = tmp[tmpIndex];
-                                            if ([ParserManager isPureNum:mulLeft]) {
-                                                muls = muls * [mulLeft floatValue];
-                                            }else{
-                                                NSAssert(0, @"4、Invalid view.attribute value:%@",sec);
-                                            }
-                                        }else{
-                                            NSAssert(0, @"5、Invalid view.attribute value:%@",sec);
-                                        }
-                                        tmpIndex = index+1;
-                                        if (tmpIndex<=tmp.count && tmpIndex>=0) {
-                                            mulRight = tmp[tmpIndex];
-                                            if ([ParserManager isPureNum:mulLeft]) {
-                                                muls = muls * [mulLeft floatValue];
-                                            }else{
-                                                NSAssert(0, @"4、Invalid view.attribute value:%@",sec);
-                                            }
-                                        }else{
-                                            NSAssert(0, @"5、Invalid view.attribute value:%@",sec);
-                                        }
-                                        multiplier = muls;
-                                        constanttmp = [NSString stringWithFormat:@"%@*%@*%@",mulLeft,obj,mulRight];
-                                        
-                                    }else{
-                                        //倍数找到了
-                                        if (isleft) {
-                                            index--;
-                                        }else{
-                                            index++;
-                                        }
-                                        if (index<=tmp.count && index>=0) {
-                                            NSString * multmp = tmp[index];
-                                            if ([ParserManager isPureNum:multmp]) {
-                                                multiplier = [multmp floatValue];
-                                                if (isleft) {
-                                                    constanttmp = [NSString stringWithFormat:@"%@*%@",multmp,obj];
-                                                }else{
-                                                    constanttmp = [NSString stringWithFormat:@"%@*%@",obj,multmp];
-                                                }
-                                            }else{
-                                                NSAssert(0, @"4、Invalid view.attribute value:%@",sec);
-                                            }
-                                        }else{
-                                            NSAssert(0, @"5、Invalid view.attribute value:%@",sec);
-                                        }
-                                    }
-                                    
-                                }else{
-                                    //没有倍数
-                                    multiplier = 1.0;
-                                }
-                                NSString * sectmp = [result stringByReplacingOccurrencesOfString:constanttmp withString:@"0"];
-                                c = [[FormulaStringCalcUtility calcComplexFormulaString:sectmp] floatValue];
+                        NSString * obj = @"";
+                        for (NSString * key in [views allKeys]) {
+                            if ([sec rangeOfString:key].location!=NSNotFound) {
+                                //找到item2View
+                                item2View = views[key];
+                                obj=key;
+                                break;
                             }
                         }
+                        BOOL havaAttri2 = NO;
+                        for (NSString * att in ___NSLayoutAttributeArr) {
+                            if ([sec rangeOfString:att].location!=NSNotFound) {
+                                if ([sec rangeOfString:obj].location!=NSNotFound) {
+                                    //找到attribute2
+                                    attribute2 = NSLayoutAttributeEnum(att);
+                                    havaAttri2 = YES;
+                                    obj = [NSString stringWithFormat:@"%@.%@",obj,att];
+                                    break;
+                                }
+                            }
+                        }
+                        if (!havaAttri2) {
+                            attribute2 = attribute;
+                        }
+                        //处理倍数关系
+                        //1、左右是否有*
+                        NSString * constanttmp = obj;
+                        NSString * replace=@"1234567891011121314151617181920";
+                        NSString * result = [sec stringByReplacingOccurrencesOfString:obj withString:replace];
+                        result = [FormulaStringCalcUtility firstCalcComplexFormulaString:result];
+                        result = [result stringByReplacingOccurrencesOfString:replace withString:obj];
+                        
+                        BOOL isleft = ([sec rangeOfString:[@"*" stringByAppendingString:obj]].location!=NSNotFound);
+                        BOOL isRight = ([sec rangeOfString:[obj stringByAppendingString:@"*"]].location!=NSNotFound);
+                        if (isleft || isRight){
+                            NSCharacterSet *doNotWant = [NSCharacterSet characterSetWithCharactersInString:@"[]{}（#%-*+=_）\\|~(＜＞$%^&*)_+ "];
+                            NSArray * tmp = [result componentsSeparatedByCharactersInSet:doNotWant];
+                            NSInteger index = [tmp indexOfObject:obj];
+                            if (isleft && isRight) {
+                                
+                                NSInteger tmpIndex = index-1;
+                                CGFloat muls = 1.0;
+                                NSString * mulLeft = @"";
+                                NSString * mulRight = @"";
+                                if (tmpIndex<=tmp.count && tmpIndex>=0) {
+                                    mulLeft = tmp[tmpIndex];
+                                    if ([self isPureNum:mulLeft]) {
+                                        muls = muls * [mulLeft floatValue];
+                                    }else{
+                                        //NSAssert(0, @"4、Invalid view.attribute value:%@",sec);
+                                    }
+                                }else{
+                                    //NSAssert(0, @"5、Invalid view.attribute value:%@",sec);
+                                }
+                                tmpIndex = index+1;
+                                if (tmpIndex<=tmp.count && tmpIndex>=0) {
+                                    mulRight = tmp[tmpIndex];
+                                    if ([self isPureNum:mulLeft]) {
+                                        muls = muls * [mulLeft floatValue];
+                                    }else{
+                                        //NSAssert(0, @"4、Invalid view.attribute value:%@",sec);
+                                    }
+                                }else{
+                                    //NSAssert(0, @"5、Invalid view.attribute value:%@",sec);
+                                }
+                                multiplier = muls;
+                                constanttmp = [NSString stringWithFormat:@"%@*%@*%@",mulLeft,obj,mulRight];
+                                
+                            }else{
+                                //倍数找到了
+                                if (isleft) {
+                                    index--;
+                                }else{
+                                    index++;
+                                }
+                                if (index<=tmp.count && index>=0) {
+                                    NSString * multmp = tmp[index];
+                                    if ([self isPureNum:multmp]) {
+                                        multiplier = [multmp floatValue];
+                                        if (isleft) {
+                                            constanttmp = [NSString stringWithFormat:@"%@*%@",multmp,obj];
+                                        }else{
+                                            constanttmp = [NSString stringWithFormat:@"%@*%@",obj,multmp];
+                                        }
+                                    }else{
+                                        //NSAssert(0, @"4、Invalid view.attribute value:%@",sec);
+                                    }
+                                }else{
+                                    //NSAssert(0, @"5、Invalid view.attribute value:%@",sec);
+                                }
+                            }
+                            
+                        }else{
+                            //没有倍数
+                            multiplier = 1.0;
+                        }
+                        NSString * sectmp = [result stringByReplacingOccurrencesOfString:constanttmp withString:@"0"];
+                        c = [[FormulaStringCalcUtility calcComplexFormulaString:sectmp] floatValue];
                     }
                 }
             }

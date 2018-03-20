@@ -17,7 +17,7 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     // 设置允许摇一摇功能
-    [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;  
+    [UIApplication sharedApplication].applicationSupportsShakeToEdit = YES;
     return YES;
 }
 
