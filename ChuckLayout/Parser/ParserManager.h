@@ -18,6 +18,8 @@
 #endif
 
 @interface ParserManager : NSObject
+@property (nonatomic, strong) NSXMLParser * parser;
 - (NSXMLParser *)parserFilePath:(NSString *)path withBlock:(XMLParserBlock)block superView:(UIView *)superView;
 - (UIView *)parserFindViewById:(NSString *)viewId;
+- (void)parserAgain;
 @end

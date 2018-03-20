@@ -33,6 +33,7 @@
 		CAC26A50205FA01B00F5690B /* font.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAC26A42205FA01B00F5690B /* font.plist */; };
 		CAC26A51205FA01B00F5690B /* string.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAC26A43205FA01B00F5690B /* string.plist */; };
 		CAC26A52205FA01B00F5690B /* style.plist in Resources */ = {isa = PBXBuildFile; fileRef = CAC26A44205FA01B00F5690B /* style.plist */; };
+		CAC26AD4205FC5CD00F5690B /* test.xml in Resources */ = {isa = PBXBuildFile; fileRef = CAC26AD3205FC5CD00F5690B /* test.xml */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -80,6 +81,7 @@
 		CAC26A42205FA01B00F5690B /* font.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = font.plist; sourceTree = "<group>"; };
 		CAC26A43205FA01B00F5690B /* string.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = string.plist; sourceTree = "<group>"; };
 		CAC26A44205FA01B00F5690B /* style.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = style.plist; sourceTree = "<group>"; };
+		CAC26AD3205FC5CD00F5690B /* test.xml */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = test.xml; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -114,7 +116,7 @@
 			children = (
 				CAC26A2B205FA01200F5690B /* Res */,
 				CAC26A27205F9FE800F5690B /* Parser */,
-				CAC26A24205F9FCE00F5690B /* xml */,
+				CAC26A24205F9FCE00F5690B /* xmls */,
 				CAC26A17205F9FA400F5690B /* Category */,
 				CAC26A01205F9F7B00F5690B /* AppDelegate.h */,
 				CAC26A02205F9F7B00F5690B /* AppDelegate.m */,
@@ -144,12 +146,13 @@
 			path = Category;
 			sourceTree = "<group>";
 		};
-		CAC26A24205F9FCE00F5690B /* xml */ = {
+		CAC26A24205F9FCE00F5690B /* xmls */ = {
 			isa = PBXGroup;
 			children = (
 				CAC26A25205F9FD900F5690B /* test5.xml */,
+				CAC26AD3205FC5CD00F5690B /* test.xml */,
 			);
-			path = xml;
+			path = xmls;
 			sourceTree = "<group>";
 		};
 		CAC26A27205F9FE800F5690B /* Parser */ = {
@@ -214,6 +217,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CAC26A14205F9F7B00F5690B /* Build configuration list for PBXNativeTarget "ChuckLayout" */;
 			buildPhases = (
+				CAA10BD4205FFC1500ED332B /* Run Script */,
 				CAC269FA205F9F7B00F5690B /* Sources */,
 				CAC269FB205F9F7B00F5690B /* Frameworks */,
 				CAC269FC205F9F7B00F5690B /* Resources */,
@@ -233,6 +237,9 @@
 		CAC269F6205F9F7B00F5690B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				KnownAssetTags = (
+					New,
+				);
 				LastUpgradeCheck = 0920;
 				ORGANIZATIONNAME = "梁慧聪";
 				TargetAttributes = {
@@ -266,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAC26A50205FA01B00F5690B /* font.plist in Resources */,
+				CAC26AD4205FC5CD00F5690B /* test.xml in Resources */,
 				CAC26A0E205F9F7B00F5690B /* LaunchScreen.storyboard in Resources */,
 				CAC26A4F205FA01B00F5690B /* dime.plist in Resources */,
 				CAC26A26205F9FD900F5690B /* test5.xml in Resources */,
@@ -278,6 +286,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CAA10BD4205FFC1500ED332B /* Run Script */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 12;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Run Script";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "echo \"编译开始\"\nprojectPath=\"#define SRCROOT @\\\"\"`mdfind -name \"xmls\" -onlyin ./`\"\\\"\";\necho $projectPath\nparserPath=`mdfind -name \"ParserManager.m\" -onlyin ./`\necho $parserPath\nsed -i \"\" \"45s:.*:${projectPath}:g\" $parserPath\n\n#xcrun simctl openurl booted $urlSc";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		CAC269FA205F9F7B00F5690B /* Sources */ = {

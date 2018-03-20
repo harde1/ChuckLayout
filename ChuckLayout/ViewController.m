@@ -17,14 +17,13 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
     __weak typeof(self) weakSelf = self;
     NSString * path = [[NSBundle mainBundle] pathForResource:@"test5" ofType:@"xml"];
     NSXMLParser * parser = [self.parserManager parserFilePath:path withBlock:^(ParserManager *parser, NSMutableDictionary *xmlDictionary, NSString *jsonString, UIView *view, NSError *error) {
         if (error) {
             return;
         }
-        weakSelf.viewRed = [parser parserFindViewById:@"view"];
-        
     } superView:self.view];
     [parser parse];
 }
@@ -32,12 +31,14 @@
     [super viewDidAppear:animated];
 }
 
-- (ParserManager *)parserManager
-{
+- (ParserManager *)parserManager{
     if (!_parserManager) {
         _parserManager = [[ParserManager alloc] init];
     }
     return _parserManager;
 }
-
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event {
+    NSLog(@"开始摇动");
+    [self.parserManager parserAgain];
+}
 @end

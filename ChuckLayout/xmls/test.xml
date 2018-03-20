@@ -1,0 +1,14 @@
+<UIView
+    id="contentView"
+    layouts="width=0.3 * parent,height=parent"
+    backgroundColor="red"
+>
+<UICollectionView
+    layouts="width=parent,height=parent"
+    backgroundColor="blue"
+    collectionViewLayout="UICollectionViewFlowLayout"
+    layout_propertys="{\"itemSize\":{100,100}}"
+    >
+    
+    </UICollectionView>
+</UIView>

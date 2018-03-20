@@ -42,7 +42,7 @@ const NSArray *___NSLayoutAttributeArr;
 // 字串 to 枚举
 #define NSLayoutAttributeEnum(string) ([NSLayoutAttributeGet indexOfObject:string])
 
-
+#define SRCROOT @"/Users/chuckliang/Documents/gitProject/ChuckLayout/ChuckLayout/xmls"
 @interface ParserManager()<NSXMLParserDelegate>
 @property (nonatomic, strong) NSMutableArray * formats;
 @property (nonatomic, strong) NSMutableDictionary * views;
@@ -52,13 +52,28 @@ const NSArray *___NSLayoutAttributeArr;
     return [self parserFilePath:path withBlock:block superView:nil];
 }
 - (NSXMLParser *)parserFilePath:(NSString *)path withBlock:(XMLParserBlock)block superView:(UIView *)superView{
+    if (_parser) {
+        [_parser abortParsing];
+        _parser = nil;
+    }
+#if TARGET_IPHONE_SIMULATOR
+    NSString * origfile = [path lastPathComponent];
+    origfile = [NSString stringWithFormat:@"%@/%@",SRCROOT,origfile];
+    path = origfile;
+//    NSLog(@"当前文件路径是:%@",path);
+#endif
     NSURL * url = [NSURL fileURLWithPath:path];
     NSXMLParser *xmlParser = [[NSXMLParser alloc] initWithContentsOfURL:url];
     xmlParser.superView = superView;
     xmlParser.xmlUrl = url;
     xmlParser.delegate = self;
     xmlParser.xmlParserBlock = block;
+    self.parser = xmlParser;
     return xmlParser;
+}
+- (void)parserAgain{
+    [self parserFilePath:[self.parser.xmlUrl absoluteString] withBlock:self.parser.xmlParserBlock superView:self.parser.superView];
+    [self.parser parse];
 }
 #pragma mark xmlparser
 //step 1 :准备解析
