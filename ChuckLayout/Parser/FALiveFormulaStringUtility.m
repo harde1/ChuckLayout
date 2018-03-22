@@ -1,14 +1,14 @@
 //
-//  FormulaStringCalcUtility.m
-//  MyLayoutParserDemo
+//  FALiveFormulaStringUtility.m
+//  FALiveCommon
 //
-//  Created by 梁慧聪 on 2018/3/19.
-//  Copyright © 2018年 youngsoft. All rights reserved.
+//  Created by 梁慧聪 on 2018/3/20.
+//  Copyright © 2018年 kugou. All rights reserved.
 //
 
-#import "FormulaStringCalcUtility.h"
+#import "FALiveFormulaStringUtility.h"
 
-@implementation FormulaStringCalcUtility
+@implementation FALiveFormulaStringUtility
 
 // 字符串加
 + (NSString *)addV1:(NSString *)v1 v2:(NSString *)v2 {

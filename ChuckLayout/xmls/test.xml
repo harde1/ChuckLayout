@@ -1,5 +1,5 @@
 <UIView
-	layouts = "width=(130/375.0) * parent.width,height=parent"
+	layouts = "parent"
     backgroundColor="red">
     
     <UICollectionView

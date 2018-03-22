@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CA32C4A82063E1C000C0DE31 /* FALiveConstraintHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32C4A72063E1C000C0DE31 /* FALiveConstraintHelper.m */; };
+		CA32C4AB2063E1EA00C0DE31 /* FALiveFormulaStringUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = CA32C4AA2063E1EA00C0DE31 /* FALiveFormulaStringUtility.m */; };
+		CAB249202062604D00B938CB /* LayoutConstrant.cpp in Sources */ = {isa = PBXBuildFile; fileRef = CAB2491E2062604D00B938CB /* LayoutConstrant.cpp */; };
 		CAC26A03205F9F7B00F5690B /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A02205F9F7B00F5690B /* AppDelegate.m */; };
 		CAC26A06205F9F7B00F5690B /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A05205F9F7B00F5690B /* ViewController.m */; };
 		CAC26A09205F9F7B00F5690B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CAC26A07205F9F7B00F5690B /* Main.storyboard */; };
@@ -15,10 +18,9 @@
 		CAC26A11205F9F7B00F5690B /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A10205F9F7B00F5690B /* main.m */; };
 		CAC26A20205F9FC300F5690B /* UIView+FALayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A18205F9FC200F5690B /* UIView+FALayout.m */; };
 		CAC26A21205F9FC300F5690B /* NSString+Property.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A19205F9FC200F5690B /* NSString+Property.m */; };
-		CAC26A22205F9FC300F5690B /* FormulaStringCalcUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A1A205F9FC300F5690B /* FormulaStringCalcUtility.m */; };
 		CAC26A23205F9FC300F5690B /* NSXMLParser+MyLayout.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A1B205F9FC300F5690B /* NSXMLParser+MyLayout.m */; };
 		CAC26A26205F9FD900F5690B /* test5.xml in Resources */ = {isa = PBXBuildFile; fileRef = CAC26A25205F9FD900F5690B /* test5.xml */; };
-		CAC26A2A205FA00700F5690B /* ParserManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A29205FA00700F5690B /* ParserManager.m */; };
+		CAC26A2A205FA00700F5690B /* ParserManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A29205FA00700F5690B /* ParserManager.mm */; };
 		CAC26A45205FA01B00F5690B /* YSBFontManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A2D205FA01B00F5690B /* YSBFontManager.m */; };
 		CAC26A46205FA01B00F5690B /* YSColorManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A2F205FA01B00F5690B /* YSColorManager.m */; };
 		CAC26A47205FA01B00F5690B /* YSDimeManager.m in Sources */ = {isa = PBXBuildFile; fileRef = CAC26A31205FA01B00F5690B /* YSDimeManager.m */; };
@@ -37,6 +39,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		CA32C4A62063E1C000C0DE31 /* FALiveConstraintHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FALiveConstraintHelper.h; sourceTree = "<group>"; };
+		CA32C4A72063E1C000C0DE31 /* FALiveConstraintHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FALiveConstraintHelper.m; sourceTree = "<group>"; };
+		CA32C4A92063E1EA00C0DE31 /* FALiveFormulaStringUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FALiveFormulaStringUtility.h; sourceTree = "<group>"; };
+		CA32C4AA2063E1EA00C0DE31 /* FALiveFormulaStringUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FALiveFormulaStringUtility.m; sourceTree = "<group>"; };
+		CAB2491E2062604D00B938CB /* LayoutConstrant.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = LayoutConstrant.cpp; sourceTree = "<group>"; };
+		CAB2491F2062604D00B938CB /* LayoutConstrant.hpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.h; path = LayoutConstrant.hpp; sourceTree = "<group>"; };
 		CAC269FE205F9F7B00F5690B /* ChuckLayout.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ChuckLayout.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CAC26A01205F9F7B00F5690B /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		CAC26A02205F9F7B00F5690B /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -49,15 +57,13 @@
 		CAC26A10205F9F7B00F5690B /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		CAC26A18205F9FC200F5690B /* UIView+FALayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+FALayout.m"; sourceTree = "<group>"; };
 		CAC26A19205F9FC200F5690B /* NSString+Property.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+Property.m"; sourceTree = "<group>"; };
-		CAC26A1A205F9FC300F5690B /* FormulaStringCalcUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FormulaStringCalcUtility.m; sourceTree = "<group>"; };
 		CAC26A1B205F9FC300F5690B /* NSXMLParser+MyLayout.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSXMLParser+MyLayout.m"; sourceTree = "<group>"; };
 		CAC26A1C205F9FC300F5690B /* NSString+Property.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+Property.h"; sourceTree = "<group>"; };
 		CAC26A1D205F9FC300F5690B /* UIView+FALayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+FALayout.h"; sourceTree = "<group>"; };
 		CAC26A1E205F9FC300F5690B /* NSXMLParser+MyLayout.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSXMLParser+MyLayout.h"; sourceTree = "<group>"; };
-		CAC26A1F205F9FC300F5690B /* FormulaStringCalcUtility.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FormulaStringCalcUtility.h; sourceTree = "<group>"; };
 		CAC26A25205F9FD900F5690B /* test5.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = test5.xml; sourceTree = "<group>"; };
 		CAC26A28205FA00700F5690B /* ParserManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParserManager.h; sourceTree = "<group>"; };
-		CAC26A29205FA00700F5690B /* ParserManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ParserManager.m; sourceTree = "<group>"; };
+		CAC26A29205FA00700F5690B /* ParserManager.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ParserManager.mm; sourceTree = "<group>"; };
 		CAC26A2D205FA01B00F5690B /* YSBFontManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSBFontManager.m; sourceTree = "<group>"; };
 		CAC26A2E205FA01B00F5690B /* YSColorManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YSColorManager.h; sourceTree = "<group>"; };
 		CAC26A2F205FA01B00F5690B /* YSColorManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YSColorManager.m; sourceTree = "<group>"; };
@@ -95,6 +101,15 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		CAB248F42062462300B938CB /* Cpp */ = {
+			isa = PBXGroup;
+			children = (
+				CAB2491E2062604D00B938CB /* LayoutConstrant.cpp */,
+				CAB2491F2062604D00B938CB /* LayoutConstrant.hpp */,
+			);
+			path = Cpp;
+			sourceTree = "<group>";
+		};
 		CAC269F5205F9F7B00F5690B = {
 			isa = PBXGroup;
 			children = (
@@ -114,6 +129,7 @@
 		CAC26A00205F9F7B00F5690B /* ChuckLayout */ = {
 			isa = PBXGroup;
 			children = (
+				CAB248F42062462300B938CB /* Cpp */,
 				CAC26A2B205FA01200F5690B /* Res */,
 				CAC26A27205F9FE800F5690B /* Parser */,
 				CAC26A24205F9FCE00F5690B /* xmls */,
@@ -134,8 +150,6 @@
 		CAC26A17205F9FA400F5690B /* Category */ = {
 			isa = PBXGroup;
 			children = (
-				CAC26A1F205F9FC300F5690B /* FormulaStringCalcUtility.h */,
-				CAC26A1A205F9FC300F5690B /* FormulaStringCalcUtility.m */,
 				CAC26A1C205F9FC300F5690B /* NSString+Property.h */,
 				CAC26A19205F9FC200F5690B /* NSString+Property.m */,
 				CAC26A1E205F9FC300F5690B /* NSXMLParser+MyLayout.h */,
@@ -159,7 +173,11 @@
 			isa = PBXGroup;
 			children = (
 				CAC26A28205FA00700F5690B /* ParserManager.h */,
-				CAC26A29205FA00700F5690B /* ParserManager.m */,
+				CAC26A29205FA00700F5690B /* ParserManager.mm */,
+				CA32C4A62063E1C000C0DE31 /* FALiveConstraintHelper.h */,
+				CA32C4A72063E1C000C0DE31 /* FALiveConstraintHelper.m */,
+				CA32C4A92063E1EA00C0DE31 /* FALiveFormulaStringUtility.h */,
+				CA32C4AA2063E1EA00C0DE31 /* FALiveFormulaStringUtility.m */,
 			);
 			path = Parser;
 			sourceTree = "<group>";
@@ -300,7 +318,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"编译开始\"\nprojectPath=\"#define SRCROOT @\\\"\"`mdfind -name \"xmls\" -onlyin ./`\"\\\"\";\necho $projectPath\nparserPath=`mdfind -name \"ParserManager.m\" -onlyin ./`\necho $parserPath\nsed -i \"\" \"45s:.*:${projectPath}:g\" $parserPath\n\n#xcrun simctl openurl booted $urlSc";
+			shellScript = "echo \"编译开始\"\nprojectPath=\"#define SRCROOT @\\\"\"`mdfind -name \"xmls\" -onlyin ./`\"\\\"\";\necho $projectPath\nparserPath=`mdfind -name \"ParserManager.m\" -onlyin ./`\necho $parserPath\n#sed -i \"\" \"8s:.*:${projectPath}:g\" $parserPath\n\n#xcrun simctl openurl booted $urlSc";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -313,19 +331,21 @@
 				CAC26A4B205FA01B00F5690B /* YSResourceManager.m in Sources */,
 				CAC26A06205F9F7B00F5690B /* ViewController.m in Sources */,
 				CAC26A45205FA01B00F5690B /* YSBFontManager.m in Sources */,
+				CAB249202062604D00B938CB /* LayoutConstrant.cpp in Sources */,
 				CAC26A4D205FA01B00F5690B /* YSStyleManager.m in Sources */,
 				CAC26A20205F9FC300F5690B /* UIView+FALayout.m in Sources */,
-				CAC26A2A205FA00700F5690B /* ParserManager.m in Sources */,
+				CAC26A2A205FA00700F5690B /* ParserManager.mm in Sources */,
 				CAC26A11205F9F7B00F5690B /* main.m in Sources */,
 				CAC26A48205FA01B00F5690B /* YSImageManager.m in Sources */,
 				CAC26A46205FA01B00F5690B /* YSColorManager.m in Sources */,
 				CAC26A4A205FA01B00F5690B /* YSResourceBase.m in Sources */,
 				CAC26A4C205FA01B00F5690B /* YSStringManager.m in Sources */,
 				CAC26A47205FA01B00F5690B /* YSDimeManager.m in Sources */,
+				CA32C4A82063E1C000C0DE31 /* FALiveConstraintHelper.m in Sources */,
 				CAC26A03205F9F7B00F5690B /* AppDelegate.m in Sources */,
 				CAC26A23205F9FC300F5690B /* NSXMLParser+MyLayout.m in Sources */,
 				CAC26A21205F9FC300F5690B /* NSString+Property.m in Sources */,
-				CAC26A22205F9FC300F5690B /* FormulaStringCalcUtility.m in Sources */,
+				CA32C4AB2063E1EA00C0DE31 /* FALiveFormulaStringUtility.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
