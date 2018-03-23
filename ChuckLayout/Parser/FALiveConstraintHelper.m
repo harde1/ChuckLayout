@@ -58,8 +58,15 @@
 
 #pragma mark - 布局整理
 + (NSArray<NSLayoutConstraint *> *)format:(NSString *)format views:(NSDictionary<NSString *, id> *)views{
+    return [self format:format opts:0 mts:nil views:views];
+}
++ (NSArray<NSLayoutConstraint *> *)format:(NSString *)format opts:(NSLayoutFormatOptions)opts mts:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views{
     format = [format stringByReplacingOccurrencesOfString:@" " withString:@""];
     NSMutableArray * arr = [NSMutableArray array];
+    //判断如果是符合 vfl 规则的，走 vfl 规则
+    if ([format hasPrefix:@"H:"]||[format hasPrefix:@"V:"]) {
+        return [NSLayoutConstraint constraintsWithVisualFormat:format options:opts metrics:metrics views:views];
+    }
     NSLayoutConstraint * constraint = nil;
     if ([format isKindOfClass:[NSString class]]) {
         UIView * itemView = nil;//对象
@@ -133,8 +140,9 @@
         NSString * rightFormula = [formatArr lastObject];
         
         //约束优先级priority
-        if ([rightFormula rangeOfString:@":"].location!=NSNotFound) {
-            NSArray * tmp = [rightFormula componentsSeparatedByString:@":"];
+        ///例子: _lbName.left = _ivSinger + 5 @ 750
+        if ([rightFormula rangeOfString:@"@"].location!=NSNotFound) {
+            NSArray * tmp = [rightFormula componentsSeparatedByString:@"@"];
             rightFormula = [tmp firstObject];
             lPriority = [tmp lastObject];
             if ([self isPureNum:lPriority]) {
@@ -289,8 +297,8 @@
         }
         BOOL leftEqualItem = ([leftFormula isEqualToString:item]);
         BOOL rightEqualItem2 = ([attri2 isEqualToString:@""]);
-        NSString * checkFormat = [NSString stringWithFormat:@"[%@]%@%@%@%@[%@]%@*%@+(%@)",item,leftEqualItem?@"":@".",attri,relate,item2,rightEqualItem2?@"":@".",attri2,multmp,cFormula];
-        NSLog(@"format:%@,————:%@",format,checkFormat);
+//        NSString * checkFormat = [NSString stringWithFormat:@"[%@]%@%@%@%@[%@]%@*%@+(%@)",item,leftEqualItem?@"":@".",attri,relate,item2,rightEqualItem2?@"":@".",attri2,multmp,cFormula];
+//        NSLog(@"format:%@,————:%@",format,checkFormat);
         
         ////右边 是否是单纯关联该对象的四维属性
         if (!leftEqualItem) {
@@ -318,15 +326,17 @@
     }
     return arr;
 }
-+ (void)formats:(NSArray *)formats views:(NSDictionary<NSString *, id> *)views{
-    if ([formats isKindOfClass:[NSArray class]]&& formats.count>0) {
-        [formats enumerateObjectsUsingBlock:^(NSString *  _Nonnull format, NSUInteger idx, BOOL * _Nonnull stop) {
-            [FALiveConstraintHelper format:format views:views];
-        }];
-    }
++ (NSArray<NSLayoutConstraint *> *)formats:(NSArray *)formats views:(NSDictionary<NSString *, id> *)views{
+    return [self formats:formats opts:0 mts:nil views:views];
 }
-+ (void)formats:(NSArray *)formats opts:(NSLayoutFormatOptions)opts mts:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views{
-    //    nil
++ (NSArray<NSLayoutConstraint *> *)formats:(NSArray *)formats opts:(NSLayoutFormatOptions)opts mts:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views{
+    NSMutableArray * arr = [NSMutableArray array];
+    if ([formats isKindOfClass:[NSArray class]]&& formats.count>0) {
+        for (NSString *  _Nonnull format in formats) {
+            [arr addObjectsFromArray:[FALiveConstraintHelper format:format opts:opts mts:metrics views:views]];
+        }
+    }
+    return arr;
 }
 + (NSLayoutConstraint *)constraintItem:(UIView *)ITEM attr1:(NSLayoutAttribute)ATTR1 rel:(NSLayoutRelation)RELATION item2:(UIView *)ITEM2 attr2:(NSLayoutAttribute)ATTR2 mul:(CGFloat)MULTIPLIER constant:(CGFloat)CONSTANT{
     return ({
