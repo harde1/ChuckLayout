@@ -1,11 +1,11 @@
 <UIView
 	layouts = "parent"
-    backgroundColor="red">
+    backgroundColor="white">
     
     <UICollectionView
         layout="UICollectionViewFlowLayout"
-        layouts="width=parent,height=parent"
-        backgroundColor="#00000000"
+        layouts="width=0.3 * parent,height=parent"
+        backgroundColor="blue"
         >
         
     </UICollectionView>

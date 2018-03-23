@@ -313,8 +313,4 @@
     return _views;
 }
 
-+ (BOOL)isLayoutAttribute:(NSLayoutAttribute)attribute{
-    return ((attribute & (NSLayoutAttributeLeft|NSLayoutAttributeRight|NSLayoutAttributeTop|NSLayoutAttributeBottom|NSLayoutAttributeLeading|NSLayoutAttributeTrailing|NSLayoutAttributeWidth|NSLayoutAttributeHeight|NSLayoutAttributeCenterX|NSLayoutAttributeCenterY|NSLayoutAttributeLastBaseline|NSLayoutAttributeBaseline|
-                          NSLayoutAttributeFirstBaseline|NSLayoutAttributeLeftMargin|NSLayoutAttributeRightMargin|NSLayoutAttributeTopMargin|NSLayoutAttributeBottomMargin|NSLayoutAttributeLeadingMargin|NSLayoutAttributeTrailingMargin|NSLayoutAttributeCenterXWithinMargins|NSLayoutAttributeCenterYWithinMargins|NSLayoutAttributeNotAnAttribute)) == attribute);
-}
 @end
