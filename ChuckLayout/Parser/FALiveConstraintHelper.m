@@ -62,13 +62,15 @@
 }
 + (NSArray<NSLayoutConstraint *> *)format:(NSString *)format opts:(NSLayoutFormatOptions)opts mts:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views{
     format = [format stringByReplacingOccurrencesOfString:@" " withString:@""];
-    NSMutableArray * arr = [NSMutableArray array];
+    
     //判断如果是符合 vfl 规则的，走 vfl 规则
     if ([format hasPrefix:@"H:"]||[format hasPrefix:@"V:"]) {
         return [NSLayoutConstraint constraintsWithVisualFormat:format options:opts metrics:metrics views:views];
     }
+    NSMutableArray * arr = [NSMutableArray array];
     NSLayoutConstraint * constraint = nil;
-    if ([format isKindOfClass:[NSString class]]) {
+//    NSLog(@"【layout】begin");
+    if ([format isKindOfClass:[NSString class]] && format.length>0) {
         UIView * itemView = nil;//对象
         NSLayoutAttribute attribute = NSLayoutAttributeNotAnAttribute;//对象关系
         NSLayoutRelation relation = NSLayoutRelationEqual;//等式
@@ -106,31 +108,45 @@
         }
         ////// 左边等式 /////////////
         NSString * leftFormula = [formatArr firstObject];
-        for (NSString * key in [views allKeys]) {
-            if ([leftFormula rangeOfString:key].location!=NSNotFound) {
-                //找到item2View
-                item = key;
-                itemView = views[item];
-                break;
+        NSArray * allViews = [views allKeys];
+        
+        NSMutableArray * tmp = [NSMutableArray arrayWithArray:[leftFormula componentsSeparatedByString:@"."]];
+        NSString * viewName = @"";
+        //尾元素是布局
+        if (tmp.count>1&&[[FALiveConstraintHelper shareInstance].layoutAttributeArr containsObject:[tmp lastObject]]) {
+            //找到attribute
+            attri = [tmp lastObject];
+            attribute = [FALiveConstraintHelper layoutAttributeEnum:attri];
+            [tmp removeLastObject];
+            if (tmp.count>1) {
+                viewName = [tmp componentsJoinedByString:@"."];
+            }else{
+                viewName = [tmp firstObject];
             }
+        }else{
+            viewName = leftFormula;
         }
+        if ([allViews containsObject:viewName]) {
+            item = viewName;
+        }
+        itemView = views[item];
        
         if (!itemView) {
             NSAssert(0, @"布局公式没有主要的约束对象:%@",format);
             return arr;
         }
         
-        for (NSString * att in [FALiveConstraintHelper shareInstance].layoutAttributeArr) {
-            if ([leftFormula rangeOfString:att].location!=NSNotFound) {
-                NSString * tmp=[NSString stringWithFormat:@"%@.%@",item,att];
-                if ([leftFormula isEqualToString:tmp]) {
-                    //找到attribute
-                    attri = att;
-                    attribute = [FALiveConstraintHelper layoutAttributeEnum:att];
-                    break;
-                }
-            }
-        }
+//        for (NSString * att in [FALiveConstraintHelper shareInstance].layoutAttributeArr) {
+//            if ([leftFormula rangeOfString:att].location!=NSNotFound) {
+//                NSString * tmp=[NSString stringWithFormat:@"%@.%@",item,att];
+//                if ([leftFormula isEqualToString:tmp]) {
+//                    //找到attribute
+//                    attri = att;
+//                    attribute = [FALiveConstraintHelper layoutAttributeEnum:att];
+//                    break;
+//                }
+//            }
+//        }
         if (![leftFormula isEqualToString:item]&&[attri isEqualToString:@""]) {
             NSAssert(0, @"左边布局公式没有对象关系:%@",format);
             return arr;
@@ -154,7 +170,8 @@
             item2View = nil;
             attribute2 = NSLayoutAttributeNotAnAttribute;
             multiplier = 1.0;
-            c = [rightFormula floatValue];
+            cFormula = rightFormula;
+            c = [cFormula floatValue];
             if (attribute != NSLayoutAttributeWidth && attribute != NSLayoutAttributeHeight) {
                 if ((attribute & (NSLayoutAttributeLeft|NSLayoutAttributeTop|NSLayoutAttributeBottom|NSLayoutAttributeRight|NSLayoutAttributeLeading|NSLayoutAttributeTrailing))== attribute) {
                     item2View = itemView.superview;
@@ -167,33 +184,45 @@
         }else{
             /// 右边有依赖对象
             NSString * item2attri2=@"";
-            for (NSString * key in [views allKeys]) {
+            
+            ///找到依赖关系，目前只支持单独一个依赖关系
+            for (NSString * att in [FALiveConstraintHelper shareInstance].layoutAttributeArr) {
+                if ([rightFormula rangeOfString:att].location!=NSNotFound) {
+                    //找到attribute2
+                    attri2 = att;
+                    attribute2 = [FALiveConstraintHelper layoutAttributeEnum:attri2];
+                    break;
+                }
+            }
+            BOOL noAttri2 = ([attri2 isEqualToString:@""]);
+            ///目前只支持单独一个依赖关系
+            for (NSString * key in allViews) {
                 if ([rightFormula rangeOfString:key].location!=NSNotFound) {
                     //找到item2View
-                    item2 = key;
-                    item2View = views[item2];
-                    item2attri2=item2;
-                    break;
+                    NSString * tmp=key;
+                    if (!noAttri2) {
+                        tmp=[NSString stringWithFormat:@"%@.%@",key,attri2];
+                        if ([rightFormula rangeOfString:tmp].location!=NSNotFound) {
+                            item2 = key;
+                            item2View = views[item2];
+                            item2attri2=tmp;
+                            break;
+                        }
+                    }else{
+                        item2 = tmp;
+                        item2View = views[item2];
+                        item2attri2=tmp;
+                        break;
+                    }
                 }
             }
             if (!item2View) {
                 NSAssert(0, @"布局公式没有约束的依赖对象:%@",format);
                 return arr;
             }
-            for (NSString * att in [FALiveConstraintHelper shareInstance].layoutAttributeArr) {
-                if ([rightFormula rangeOfString:att].location!=NSNotFound) {
-                    NSString * tmp=[NSString stringWithFormat:@"%@.%@",item2,att];
-                    if ([rightFormula rangeOfString:tmp].location!=NSNotFound) {
-                        //找到attribute2
-                        attri2 = att;
-                        attribute2 = [FALiveConstraintHelper layoutAttributeEnum:attri2];
-                        item2attri2 = tmp;
-                        break;
-                    }
-                }
-            }
+
             ////右边依赖对象没有对应的依赖关系，默认与左边关系一致
-            if ([attri2 isEqualToString:@""]) {
+            if (noAttri2) {
                 //例子 view.left = view1
                 attribute2 = attribute;
                 attri2 = attri;
@@ -295,10 +324,14 @@
                 c = [[FALiveFormulaStringUtility calcComplexFormulaString:cFormula] floatValue];
             }
         }
+#ifndef __OPTIMIZE__
         BOOL leftEqualItem = ([leftFormula isEqualToString:item]);
         BOOL rightEqualItem2 = ([attri2 isEqualToString:@""]);
-//        NSString * checkFormat = [NSString stringWithFormat:@"[%@]%@%@%@%@[%@]%@*%@+(%@)",item,leftEqualItem?@"":@".",attri,relate,item2,rightEqualItem2?@"":@".",attri2,multmp,cFormula];
-//        NSLog(@"format:%@,————:%@",format,checkFormat);
+        BOOL isPureNum = ([item2 isEqualToString:@""] && [attri2 isEqualToString:@""]);
+        NSString * checkFormat = [NSString stringWithFormat:@"[%@]%@%@%@%@(%@)",item,leftEqualItem?@"":@".",attri,relate,isPureNum?@"":[NSString stringWithFormat:@"[%@]%@%@*%@+",item2,rightEqualItem2?@"":@".",attri2,multmp],cFormula];
+        printf("%s\n",[[NSString stringWithFormat:@"【layout】%@ ==> %@",format,checkFormat] UTF8String]);
+#endif
+      
         
         ////右边 是否是单纯关联该对象的四维属性
         if (!leftEqualItem) {

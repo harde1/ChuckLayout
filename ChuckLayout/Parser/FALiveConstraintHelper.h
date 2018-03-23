@@ -10,6 +10,11 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+#define STRINGIZE(x) #x
+#define STRINGIZE2(x) STRINGIZE(x)
+#define SHADER_STRING(text) @ STRINGIZE2(text)
+#define FORMATS_STRING(string) ({[SHADER_STRING(string) componentsSeparatedByString:@";"];})
+
 #define ConstraintAdd(ITEM,ATTR1,RELATION,ITEM2,ATTR2,MULTIPLIER,CONSTANT) [FALiveConstraintHelper constraintItem:ITEM attr1:ATTR1 rel:RELATION item2:ATTR2 mul:MULTIPLIER constant:CONSTANT]
 
 @interface FALiveConstraintHelper : NSObject
@@ -18,6 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (NSArray<NSLayoutConstraint *> *)format:(NSString *)format opts:(NSLayoutFormatOptions)opts mts:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views;
 + (NSArray<NSLayoutConstraint *> *)formats:(NSArray *)formats views:(NSDictionary<NSString *, id> *)views;
 + (NSArray<NSLayoutConstraint *> *)formats:(NSArray *)formats opts:(NSLayoutFormatOptions)opts mts:(nullable NSDictionary<NSString *,id> *)metrics views:(NSDictionary<NSString *, id> *)views;
+
 + (NSLayoutConstraint *)constraintItem:(UIView *)ITEM attr1:(NSLayoutAttribute)ATTR1 rel:(NSLayoutRelation)RELATION item2:(UIView *)ITEM2 attr2:(NSLayoutAttribute)ATTR2 mul:(CGFloat)MULTIPLIER constant:(CGFloat)CONSTANT;
 //布局关系返回字符串
 + (NSString *)layoutAttributeIndex:(NSLayoutAttribute)attribute;
